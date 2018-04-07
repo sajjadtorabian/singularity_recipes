@@ -1,0 +1,80 @@
+Bootstrap: docker
+From: nipype/nipype:latest
+
+%help
+Help me. I’m in the container.
+
+# Both of the below are copied before %post
+# 1. For legacy < 2.3 if you need files during %post, you should copy files from your host to
+# $SINGULARITY_ROOTFS to move them into the container:
+%setup
+  #echo $PWD
+  #echo “Copying hellokitty.sh to $SINGULARITY_ROOTFS”
+  #cp hellokitty.sh $SINGULARITY_ROOTFS
+  # The touch command is the easiest way to create new, empty files
+  # Here we are just writing a file to the root of the image:
+  touch ${SINGULARITY_ROOTFS}/tacos.txt
+  # The avocados file isn’t relative to $SINGULARITY_ROOTFS, so we would expect it
+  # not to be in the image, but in our present working directory:
+  touch avocados.txt
+
+# 2. For >= 2.3 you can add files to the container using the %files section:
+# (If you are using a legacy version, files are copied after %post so you must do this via %setup)
+# Each line is a pair of <source> and <destination>, where source is a path on your host system,
+# and the destination is a path in the container
+%files
+  # Let’s add avocados.txt into the container, to join tacos.txt
+  avocados.txt # This will be added to the root of the image
+  avocados.txt /opt
+
+# To store metadata with your container:
+%labels
+  Maintainer Sajjad
+  Version v1.0
+
+# These environment variables are sourced at runtime and not at build time
+# or in the case of variables generated at build time, you can add environment variables to your
+# container in the %post section
+%environment
+  SAJJAD=badguy
+  NATALIA=goodguy
+  ALEX=someguy
+  export SAJJAD NATALIA ALEX
+
+# This is where the meat of your setup will live, including making directories, and installing software
+# and libraries -- you can use commands like git clone, wget, and curl
+%post
+  echo ‘export JAWA_SEZ=wutini’ >> $SINGULARITY_ENVIRONMENT
+	
+  # Example: installing yum, openMPI, and other dependencies for a Centos7 bootstrap:
+  yum -y groupinstall “Development Tools”
+  # Here we are at the base, /, of the container
+  git clone https://github.com/open-mpi/ompi.git
+	
+	# Now at /ompi
+  cd ompi
+  ./autogen.pl
+  ./configure --prefix=/usr/local
+  make
+  make install
+
+  /usr/local/bin/mpicc examples/ring_c.c -o /usr/bin/mpi_ring
+
+# This scriptlet does not get executed during bootstrapping; instead, when the container image is run
+# (either via the singularity run command or via executing the container directly)
+# You should manage argument processing from within your runscript
+%runscript
+  echo “Sajjaaaad!”
+  echo “Arguments received: $*”
+  # Then the arguments are passed to echo via a quoted array which ensures that all of them
+  # are properly parsed by the executed command
+  exec echo “$@“ # Using exec is like handing off the calling process to the one in the container
+  # The final command (the echo) replaces the current entry in the process table (which originally
+  # was the call to Singularity). This makes it so the runscript shell process ceases to exist, and
+  # the only process running inside this container is the called echo command. This could easily
+  # be another program like python, or an analysis script
+
+# This will give you a chance to validate the container during bootstrap process
+# You can also execute this scriptlet through the container itself
+%test
+  /usr/local/bin/mpirun --allow-run-as-root /usr/bin/mpi_test
