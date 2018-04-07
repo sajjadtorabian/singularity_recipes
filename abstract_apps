@@ -1,0 +1,39 @@
+Bootstrap: docker
+From: nipype/nipype:latest
+
+%environment
+  SAJJAD=badguy
+  NATALIA=goodguy
+  ALEX=someguy
+  export SAJJAD NATALIA ALEX
+
+%labels
+  Maintainer Sajjad
+
+# Here is our jupyter app:
+%apprun jupyter
+  exec echo "RUNNING JUPYTER"
+%applabels jupyter
+  BESTAPP=JUPYTER
+  export BESTAPP
+%appinstall jupyter
+  touch jupyter.exec
+%appenv jupyter
+  SOFTWARE=jupyter
+  export SOFTWARE
+%apphelp jupyter
+  This is the help for jupyter.
+%appfiles jupyter
+  avocados.txt
+
+# Here is our fmriprep app:
+%apphelp fmriprep
+  This is the help for fmriprep.
+%applabels fmriprep
+  BESTAPP=FMRIPREP
+  export BESTAPP
+%appinstall fmriprep
+  touch fmriprep.exec
+%appenv fmriprep
+  SOFTWARE=fmriprep
+  export SOFTWARE
