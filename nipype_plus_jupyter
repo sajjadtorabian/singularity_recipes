@@ -1,0 +1,10 @@
+Bootstrap: docker
+From: nipype/nipype:latest
+
+%labels
+  Maintainer Sajjad
+  Version v1.0
+
+%post
+  pip install --upgrade pip
+  pip install jupyter
