@@ -15,7 +15,7 @@ Now we want to debug the build and find the missing path! To do this, you can bu
 Bootstrap: docker
 From: nipype/nipype:latest
 ```
-the above you can save to whatever file you want, we're calling ours `Singularity.nipype-plus-jupyter-empty` we can then build like this:
+The above you can save to whatever file you want, we're calling ours `Singularity.nipype-plus-jupyter-empty` we can then build like this:
 
 ```
 sudo singularity build npjup.simg Singularity.nipype-plus-jupyter-empty
@@ -54,7 +54,7 @@ which pip
 /opt/conda/bin/pip
 ```
 
-Now we can update the recipe [Singularity.nipype.plug-jupyter](Singularity.nipype.plug-jupyter) with our found pip.
+Now we can update the recipe [Singularity.nipype.plus-jupyter](Singularity.nipype.plus-jupyter) with our found pip.
 
 ```
 Bootstrap: docker
