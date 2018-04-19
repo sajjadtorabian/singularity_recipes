@@ -54,7 +54,7 @@ which pip
 /opt/conda/bin/pip
 ```
 
-Now we can update the recipe [Singularity.nipype.plus-jupyter](Singularity.nipype.plus-jupyter) with our found pip.
+Now we can update the recipe [Singularity.nipype-plus-jupyter](Singularity.nipype-plus-jupyter) with our found pip.
 
 ```
 Bootstrap: docker
